@@ -12,7 +12,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-train_path', type=str,default=None)
-    parser.add_argument('-batch_size',type=int,default=32)
+    parser.add_argument('-batch_size',type=int,default=2)
     parser.add_argument('-gpu',type=str,default='0')
 
     args = parser.parse_args()
@@ -66,7 +66,7 @@ epoch = 3
 for ep in range(epoch):
     model.train()
     for batch in dataset.batchs:
-        batch.to(device)
+        batch = batch.to(device)
         optimizer.zero_grad()
         outputs = model(**batch,labels=batch['input_ids'])
         loss = outputs.loss
