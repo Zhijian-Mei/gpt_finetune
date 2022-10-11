@@ -13,7 +13,7 @@ def get_args():
 
     parser.add_argument('-train_path', type=str,default=None)
     parser.add_argument('-batch_size',type=int,default=32)
-    parser.add_argument('gpu',type=str,default='0')
+    parser.add_argument('-gpu',type=str,default='0')
 
     args = parser.parse_args()
     return args
