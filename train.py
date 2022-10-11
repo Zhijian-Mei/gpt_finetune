@@ -10,8 +10,8 @@ from torch.utils.data import Dataset, random_split
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-train_path', type=str,required=True)
-    parser.add_argument('-test_path', type=str,required=True)
+    parser.add_argument('-train_path', type=str,default=None)
+    parser.add_argument('-batch_size',type=int,default=32)
 
     args = parser.parse_args()
     return args
@@ -42,7 +42,7 @@ class NetflixDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.batchs
-
+args = get_args()
 GPT2Tokenizer.build_inputs_with_special_tokens = build_inputs_with_special_tokens
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 # set pad_token_id to unk_token_id -> be careful here as unk_token_id == eos_token_id == bos_token_id
@@ -50,7 +50,7 @@ tokenizer.pad_token = tokenizer.unk_token
 model = GPT2LMHeadModel.from_pretrained('gpt2', return_dict=True).to(device)
 
 # texts = ['I am a random text!','You are a monster!']
-dataset = NetflixDataset(descriptions, tokenizer, max_length=1024,batch_size=2)
+dataset = NetflixDataset(descriptions, tokenizer, max_length=1024,batch_size=args.batch_size)
 
 # inputs = tokenizer.batch_encode_plus(texts,return_tensors='pt',truncation=True,max_length=1024,padding=True).to(device)
 optimizer = AdamW(
