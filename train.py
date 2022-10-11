@@ -12,7 +12,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-train_path', type=str,default=None)
-    parser.add_argument('-batch_size',type=int,default=2)
+    parser.add_argument('-batch_size',type=int,default=1)
     parser.add_argument('-gpu',type=str,default='0')
 
     args = parser.parse_args()
@@ -72,7 +72,7 @@ for ep in range(epoch):
         loss = outputs.loss
         logits = outputs.logits
         indices = torch.argmax(logits, dim=2)
-        print(tokenizer.batch_decode(indices))
+        print(tokenizer.batch_decode(indices,skip_special_tokens=True))
         print(loss.item())
         loss.backward()
         optimizer.step()
