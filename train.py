@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import pandas as pd
 import torch.cuda
@@ -12,11 +13,12 @@ def get_args():
 
     parser.add_argument('-train_path', type=str,default=None)
     parser.add_argument('-batch_size',type=int,default=32)
+    parser.add_argument('gpu',type=str,default='0')
 
     args = parser.parse_args()
     return args
-
-
+args = get_args()
+os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
 descriptions = pd.read_csv('netflix_titles.csv')['description'].values
@@ -42,7 +44,7 @@ class NetflixDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.batchs
-args = get_args()
+
 GPT2Tokenizer.build_inputs_with_special_tokens = build_inputs_with_special_tokens
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 # set pad_token_id to unk_token_id -> be careful here as unk_token_id == eos_token_id == bos_token_id
