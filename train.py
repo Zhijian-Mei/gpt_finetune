@@ -39,7 +39,7 @@ class NetflixDataset(Dataset):
             txt_batch = txt_list[i:i+batch_size]
             encodings_batch = tokenizer.batch_encode_plus(txt_batch, truncation=True,
                                        max_length=max_length, padding="max_length",return_tensors='pt')
-            self.batchs.append(encodings_batch.to(device))
+            self.batchs.append(encodings_batch)
 
     def __len__(self):
         return len(self.data)
@@ -66,6 +66,7 @@ epoch = 3
 for ep in range(epoch):
     model.train()
     for batch in dataset.batchs:
+        batch.to(device)
         optimizer.zero_grad()
         outputs = model(**batch,labels=batch['input_ids'])
         loss = outputs.loss
