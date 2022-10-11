@@ -18,7 +18,9 @@ def get_args():
     args = parser.parse_args()
     return args
 args = get_args()
-os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
+
+os.environ["CUDA_VISIBLE_DEVICES"] = '4'
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
 descriptions = pd.read_csv('netflix_titles.csv')['description'].values
