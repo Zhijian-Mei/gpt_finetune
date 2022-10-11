@@ -19,7 +19,7 @@ def get_args():
     return args
 args = get_args()
 
-os.environ["CUDA_VISIBLE_DEVICES"] = '4'
+os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
