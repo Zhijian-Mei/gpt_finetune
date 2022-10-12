@@ -7,7 +7,7 @@ def bleu(references,hypothesis):
     splited_hypothesises = []
     for reference in references:
         splited_reference = reference.split(' ')
-        splited_references.append(splited_reference)
+        splited_references.append([splited_reference])
     for hypothesis in hypothesis:
         splited_hypothesis = hypothesis.split(' ')
         splited_hypothesises.append(splited_hypothesis)
