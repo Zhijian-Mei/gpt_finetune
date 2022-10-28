@@ -62,7 +62,7 @@ def get_prompt_simple(df,mask_token):
                 masked_prompt = f'the {key} of the item is {mask_token}'
                 prompt = f'the {key} of the item is {random.choice(item_attributes[key])}'
                 temp_input = input_base + masked_prompt
-                temp_output = input_base + prompt
+                temp_output = prompt
                 inputs.append(temp_input)
                 outputs.append(temp_output)
             continue
@@ -114,12 +114,15 @@ if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     train_batch_size = 2
-    eval_batch_size = 4
+    eval_batch_size = 2
 
+    data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+    # data_path = '../MAVE_filtered.csv'
     model = BartForConditionalGeneration.from_pretrained("facebook/bart-base").to(device)
     tokenizer = BartTokenizer.from_pretrained("facebook/bart-base")
 
-    df = pd.read_csv('../../AmazonKG_Mave_Merged/MAVE_filtered.csv')[['title','description','attributes']]
+    df = pd.read_csv(data_path)[['title','description','attributes']]
+
     inputs,outputs = get_prompt_simple(df,tokenizer.mask_token)
     df = pd.DataFrame()
     df['inputs'] = inputs
@@ -157,16 +160,17 @@ if __name__ == '__main__':
             optimizer.zero_grad()
             outputs = model(**x, labels=y['input_ids'])
             loss = outputs.loss
-            # logits = outputs.logits
-            # indices = torch.argmax(logits, dim=2)
-            # print(tokenizer.batch_decode(indices, skip_special_tokens=True))
+            logits = outputs.logits
+            indices = torch.argmax(logits, dim=2)
+            print(tokenizer.batch_decode(y.input_ids,skip_special_tokens=True))
+            print(tokenizer.batch_decode(indices, skip_special_tokens=True))
             total_loss += loss.item()
             loss.backward()
             optimizer.step()
         print(f'Average loss epoch {ep + 1} = {total_loss/len(trainDataset)}')
 
         # evaluation
-        torch.save(f'checkpoints/bart_epoch-{ep + 1}.pt')
+        torch.save(model.state_dict(), f'checkpoints/bart_epoch-{ep + 1}.pt')
 
         model.eval()
         references = []
