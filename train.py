@@ -119,7 +119,7 @@ if __name__ == '__main__':
     model = BartForConditionalGeneration.from_pretrained("facebook/bart-base").to(device)
     tokenizer = BartTokenizer.from_pretrained("facebook/bart-base")
 
-    df = pd.read_csv('../MAVE_filtered.csv')[['title','description','attributes']]
+    df = pd.read_csv('../../AmazonKG_Mave_Merged/MAVE_filtered.csv')[['title','description','attributes']]
     inputs,outputs = get_prompt_simple(df,tokenizer.mask_token)
     df = pd.DataFrame()
     df['inputs'] = inputs
