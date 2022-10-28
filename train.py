@@ -170,6 +170,8 @@ if __name__ == '__main__':
         print(f'Average loss epoch {ep + 1} = {total_loss/len(trainDataset)}')
 
         # evaluation
+        if not os.path.exists('checkpoints'):
+            os.makedirs('checkpoints')
         torch.save(model.state_dict(), f'checkpoints/bart_epoch-{ep + 1}.pt')
 
         model.eval()
