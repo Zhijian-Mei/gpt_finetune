@@ -160,10 +160,10 @@ if __name__ == '__main__':
             optimizer.zero_grad()
             outputs = model(**x, labels=y['input_ids'])
             loss = outputs.loss
-            logits = outputs.logits
-            indices = torch.argmax(logits, dim=2)
-            print(tokenizer.batch_decode(y.input_ids,skip_special_tokens=True))
-            print(tokenizer.batch_decode(indices, skip_special_tokens=True))
+            # logits = outputs.logits
+            # indices = torch.argmax(logits, dim=2)
+            # print(tokenizer.batch_decode(y.input_ids,skip_special_tokens=True))
+            # print(tokenizer.batch_decode(indices, skip_special_tokens=True))
             total_loss += loss.item()
             loss.backward()
             optimizer.step()
