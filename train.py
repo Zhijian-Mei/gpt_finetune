@@ -113,7 +113,7 @@ if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    train_batch_size = 1
+    train_batch_size = 2
     eval_batch_size = 2
 
     data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
