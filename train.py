@@ -77,7 +77,7 @@ class MyDataset(Dataset):
         self._y = []
         self.train = train
         inputs = df['inputs'].values
-        outputs = df['outputs'].values
+        outputs = list(df['outputs'].values)
         for i in trange(0,len(df),batch_size):
             batch_x = inputs[i:i+batch_size]
             batch_y = outputs[i:i+batch_size]
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    train_batch_size = 2
+    train_batch_size = 1
     eval_batch_size = 2
 
     data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
