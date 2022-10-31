@@ -147,9 +147,9 @@ if __name__ == '__main__':
         [
             {'params': model.parameters(), 'lr': 1e-5},
         ])
-    initial_bleu = -1
+    best_bleu = -1
     # train
-    epoch = 3
+    epoch = 20
     for ep in range(epoch):
         model.train()
         total_loss = 0
@@ -209,7 +209,9 @@ if __name__ == '__main__':
 
         assert len(references) == len(candidates)
         current_bleu = bleu(references=references,hypothesis=candidates)
-        print(current_bleu)
-
+        if current_bleu > best_bleu:
+            best_bleu = current_bleu
+            print(f'best bleu {best_bleu} in epoch {ep + 1}')
+    print(best_bleu)
 
 
