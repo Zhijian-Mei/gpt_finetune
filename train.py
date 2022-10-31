@@ -78,7 +78,7 @@ class MyDataset(Dataset):
         self.train = train
         inputs = df['inputs'].values
         outputs = list(df['outputs'].values)
-        for i in trange(0,len(df),batch_size):
+        for i in range(0,len(df),batch_size):
             batch_x = inputs[i:i+batch_size]
             batch_y = outputs[i:i+batch_size]
             encoded_batch_x = tokenizer.batch_encode_plus(batch_x, truncation=True,
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     best_bleu = -1
     # train
     epoch = 20
-    for ep in range(epoch):
+    for ep in trange(epoch):
         model.train()
         total_loss = 0
         for i in trange(len(trainDataset)):
@@ -177,7 +177,7 @@ if __name__ == '__main__':
         model.eval()
         references = []
         candidates = []
-        for i in trange(len(evalDataset)):
+        for i in range(len(evalDataset)):
             batch = evalDataset[i]
             x = batch[0].to(device)
             y = batch[1]
