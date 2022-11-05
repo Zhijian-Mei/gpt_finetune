@@ -77,5 +77,10 @@ if __name__ == '__main__':
 
     assert len(references) == len(candidates)
     bleu = bleu(references=references, hypothesis=candidates)
-
     print(bleu)
+    with open('test_result.txt','w') as f:
+        for i in range(len(references)):
+            f.write(references[i])
+            f.write('\n')
+            f.write(candidates[i])
+            f.write('\n\n')
