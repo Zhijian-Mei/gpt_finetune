@@ -9,7 +9,7 @@ import torch.cuda
 from tqdm import trange
 from transformers import GPT2Tokenizer, GPT2Model, GPT2LMHeadModel
 from transformers import BartForConditionalGeneration,BartTokenizer
-# from data_util import *
+from data_util import get_data
 from transformers import Trainer, TrainingArguments
 from torch.optim import AdamW
 # from transformers.optimization import AdamW
@@ -127,12 +127,11 @@ if __name__ == '__main__':
     df = pd.DataFrame()
     df['inputs'] = inputs
     df['outputs'] = outputs
-    train, eval = train_test_split(df, train_size=0.7, test_size=0.3,random_state=48)
-    eval, test = train_test_split(eval, train_size=0.5, test_size=0.5,random_state=48)
+
+    train, eval, test = get_data(df,random_seed=48)
 
     trainDataset = MyDataset(train,tokenizer,batch_size=train_batch_size,train=True)
     evalDataset = MyDataset(eval,tokenizer,batch_size=eval_batch_size)
-    testDataset = MyDataset(test,tokenizer,batch_size=eval_batch_size)
 
 
     # GPT2Tokenizer.build_inputs_with_special_tokens = build_inputs_with_special_tokens
