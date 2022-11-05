@@ -21,8 +21,8 @@ def get_args():
     return args
 
 if __name__ == '__main__':
-    # data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
-    data_path = '../MAVE_filtered.csv'
+    data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+    # data_path = '../MAVE_filtered.csv'
 
     eval_batch_size = 2
 
