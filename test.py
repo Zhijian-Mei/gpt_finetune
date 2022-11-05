@@ -75,6 +75,6 @@ if __name__ == '__main__':
         )
 
     assert len(references) == len(candidates)
-    current_bleu = bleu(references=references, hypothesis=candidates)
+    bleu = bleu(references=references, hypothesis=candidates)
 
-    print(current_bleu)
+    print(bleu)
