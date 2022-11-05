@@ -13,7 +13,7 @@ def get_args():
 
     parser.add_argument('-train_path', type=str, default=None)
     parser.add_argument('-train_batch', type=int, default=2)
-    parser.add_argument('-eval_batch',type=int,default=1)
+    parser.add_argument('-eval_batch',type=int,default=2)
     parser.add_argument('-gpu', type=str, default='0')
     parser.add_argument('-epoch', type=str,default='1')
 
@@ -24,11 +24,12 @@ if __name__ == '__main__':
     data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
     # data_path = '../MAVE_filtered.csv'
 
-    eval_batch_size = 2
 
     args = get_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    eval_batch_size = args.eval_batch
 
     model = BartForConditionalGeneration.from_pretrained("facebook/bart-base").to(device)
     checkpoint = torch.load(f'checkpoints/bart_epoch-{args.epoch}.pt', map_location='cuda')
