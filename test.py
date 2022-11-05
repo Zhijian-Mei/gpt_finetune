@@ -15,14 +15,14 @@ def get_args():
     parser.add_argument('-train_batch', type=int, default=2)
     parser.add_argument('-eval_batch',type=int,default=2)
     parser.add_argument('-gpu', type=str, default='0')
-    parser.add_argument('-epoch', type=str,default='1')
+    parser.add_argument('-epoch', type=str,default='3')
 
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
-    data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
-    # data_path = '../MAVE_filtered.csv'
+    # data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+    data_path = '../MAVE_filtered.csv'
 
 
     args = get_args()
@@ -73,6 +73,7 @@ if __name__ == '__main__':
             num_beams=2,
             early_stopping=True
         )
+        candidates += tokenizer.batch_decode(sample_outputs, skip_special_tokens=True)
 
     assert len(references) == len(candidates)
     bleu = bleu(references=references, hypothesis=candidates)
