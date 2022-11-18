@@ -21,7 +21,8 @@ def get_args():
     return args
 
 if __name__ == '__main__':
-    data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+    # data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+    data_path = '../MAVE_filtered.csv'
 
     df = pd.read_csv(data_path)[['title','description','attributes']]
 
@@ -68,14 +69,15 @@ if __name__ == '__main__':
             outputs = model.generate(
                 input_ids=x.input_ids,
                 attention_mask=x.attention_mask,
-                max_length=128,
+                max_length=10,
                 no_repeat_ngram_size=2,
                 pad_token_id=tokenizer.pad_token_id,
-                num_beams=2,
+                num_beams=28,
                 early_stopping=True
             )
 
             generate_sentences = tokenizer.batch_decode(outputs,skip_special_tokens=True)
+            print(text)
             print(generate_sentences)
             result[title][attribute] += generate_sentences
             quit()
