@@ -1,33 +1,90 @@
+import argparse
+import json
+import os
+import pandas as pd
 import torch
+from data_util import get_prompt_simple,get_prompt_input
 from transformers import BartForConditionalGeneration, BartTokenizer
+from tqdm import trange
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-train_path', type=str, default=None)
+    parser.add_argument('-train_batch', type=int, default=2)
+    parser.add_argument('-eval_batch',type=int,default=2)
+    parser.add_argument('-gpu', type=str, default='0')
+    parser.add_argument('-epoch', type=str,default='3')
+
+    args = parser.parse_args()
+    return args
+
+if __name__ == '__main__':
+    data_path = '../../AmazonKG_Mave_Merged/MAVE_filtered.csv'
+
+    df = pd.read_csv(data_path)[['title','description','attributes']]
+
+    args = get_args()
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = BartForConditionalGeneration.from_pretrained("facebook/bart-base").to(device)
+    tokenizer = BartTokenizer.from_pretrained("facebook/bart-base")
+
+    all_attributes = []
+    for attribute in df['attributes'].values:
+        if not pd.isna(attribute):
+            attributes = list(json.loads(attribute).keys())
+            for a in attributes:
+                if a not in all_attributes:
+                    all_attributes.append(a)
 
 
 
-text = ["Blackmailed by his company's CEO, a low-level employee finds himself forced to spy on the boss's rival and former mentor.; The type of this television work is ",
-'As big city life buzzes around them, lonely souls discover surprising sources of connection and companionship in three tales of love, loss and longing.; The type of this television work is'
+    inputs= get_prompt_input(df,tokenizer.mask_token,all_attributes)
 
-        ]
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = BartForConditionalGeneration.from_pretrained("facebook/bart-base").to(device)
-tokenizer = BartTokenizer.from_pretrained("facebook/bart-base")
+    model.load_state_dict(torch.load("checkpoints/bart_epoch-7.pt"))
+    model.eval()
 
 
-model.load_state_dict(torch.load("checkpoints/epoch-2.pt")['bart'])
-model.eval()
-x = tokenizer.batch_encode_plus(text, truncation=True,
-                                                max_length=64, padding="longest",
-                                                return_tensors='pt').to(device)
-print(x)
-sample_outputs = model.generate(
-    input_ids=x.input_ids,
-    attention_mask=x.attention_mask,
-    max_length=128,
-    no_repeat_ngram_size=2,
-    pad_token_id=tokenizer.pad_token_id,
-    num_beams=2,
-    early_stopping=True
-)
+    result = {}
 
-print(sample_outputs)
-print(tokenizer.batch_decode(sample_outputs,skip_special_tokens=True))
+
+
+    titles = list(inputs.keys())
+    for i in trange(len(titles)):
+        title = titles[i]
+        prompts = inputs[title]
+        result[title] = {}
+        for attribute in prompts.keys():
+            result[title][attribute] = []
+            prompt = prompts[attribute]
+            text = prompt
+
+            x = tokenizer.batch_encode_plus(text, truncation=True,
+                                                    max_length=128, padding="longest",
+                                                    return_tensors='pt').to(device)
+
+            outputs = model.generate(
+                input_ids=x.input_ids,
+                attention_mask=x.attention_mask,
+                max_length=128,
+                no_repeat_ngram_size=2,
+                pad_token_id=tokenizer.pad_token_id,
+                num_beams=2,
+                early_stopping=True
+            )
+
+            generate_sentences = tokenizer.batch_decode(outputs,skip_special_tokens=True)
+            print(generate_sentences)
+            result[title][attribute] += generate_sentences
+            quit()
+    df = pd.DataFrame()
+    titles = []
+    attributes = []
+    for title in result.keys():
+        titles.append(title)
+        attributes.append(result[title])
+    df['title'] = titles
+    df['attributes'] = attributes
+    df.to_csv('generate_attributes.csv')

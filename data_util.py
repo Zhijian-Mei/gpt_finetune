@@ -53,3 +53,25 @@ def get_prompt_simple(df,mask_token):
         outputs.append(input_base)
 
     return inputs,outputs
+
+def get_prompt_input(df,mask_token,attributes):
+    inputs = {}
+    titles = df['title']
+    descriptions = df['description']
+    for i in range(len(df)):
+        if pd.isna(titles[i]):
+            continue
+        inputs[titles[i]] = {}
+        input_base = ''
+        input_base += titles[i] + '; '
+        if not pd.isna(descriptions[i]):
+            input_base += descriptions[i][2:-2] + '; '
+        for key in attributes:
+            if key not in inputs[titles[i]].keys():
+                inputs[titles[i]][key] = []
+                masked_prompt = f'the {key} of the item is {mask_token}'
+                temp_input = input_base + masked_prompt
+                inputs[titles[i]][key].append(temp_input)
+
+    return inputs
+
